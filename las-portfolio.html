@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Las — Developer, Musician, Baller, Cinephile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0b0b0d;
+    --bg-alt: #101013;
+    --surface: #15151a;
+    --line: #29292f;
+    --line-soft: #1d1d22;
+    --text: #ece9e2;
+    --text-dim: #8f8e97;
+    --accent: #e2632c;
+    --accent-soft: #e2632c33;
+    --gold: #d4af37;
+    --gold-soft: #d4af3733;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family:'Inter', sans-serif;
+    font-weight:300;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  ::selection{ background: var(--accent-soft); color: var(--text); }
+
+  h1,h2,h3, .display{
+    font-family:'Oswald', sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.02em;
+    font-weight:600;
+    margin:0;
+  }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  a{ color:inherit; text-decoration:none; }
+
+  .wrap{
+    max-width:1120px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
+  }
+
+  /* ---------- background court texture ---------- */
+  .court-lines{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    opacity:0.5;
+  }
+  .court-lines svg{ width:100%; height:100%; }
+
+  /* ---------- nav ---------- */
+  header{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:50;
+    backdrop-filter: blur(10px);
+    background: rgba(11,11,13,0.72);
+    border-bottom:1px solid var(--line-soft);
+  }
+  nav{
+    max-width:1120px;
+    margin:0 auto;
+    padding:18px 32px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .logo{
+    font-family:'Oswald', sans-serif;
+    font-weight:700;
+    font-size:1.1rem;
+    letter-spacing:0.12em;
+  }
+  .logo span{ color: var(--accent); }
+  .navlinks{
+    display:flex;
+    gap:32px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color: var(--text-dim);
+  }
+  .navlinks a{
+    position:relative;
+    padding-bottom:4px;
+    transition:color 0.25s;
+  }
+  .navlinks a:hover{ color: var(--text); }
+  .navlinks a::after{
+    content:'';
+    position:absolute;
+    left:0; bottom:0;
+    width:0%;
+    height:1px;
+    background: var(--accent);
+    transition:width 0.3s ease;
+  }
+  .navlinks a:hover::after{ width:100%; }
+  .navlinks a:focus-visible, a:focus-visible{
+    outline:1px solid var(--accent);
+    outline-offset:3px;
+  }
+  @media (max-width:640px){ .navlinks{ display:none; } }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    z-index:1;
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding-top:96px;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color: var(--accent);
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:22px;
+    opacity:0;
+    animation: rise 0.7s ease forwards 0.1s;
+  }
+  .eyebrow::before{
+    content:'';
+    width:28px; height:1px;
+    background: var(--accent);
+    display:inline-block;
+  }
+  .hero h1{
+    font-size:clamp(3.4rem, 11vw, 8.2rem);
+    line-height:0.92;
+    color: var(--text);
+    opacity:0;
+    animation: rise 0.8s ease forwards 0.25s;
+  }
+  .hero h1 em{
+    font-style:normal;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--text);
+  }
+  .role-line{
+    margin-top:28px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:0;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.95rem;
+    color: var(--text-dim);
+    opacity:0;
+    animation: rise 0.8s ease forwards 0.4s;
+  }
+  .role-line span{
+    padding:0 16px;
+    border-left:1px solid var(--line);
+  }
+  .role-line span:first-child{ padding-left:0; border-left:none; }
+
+  .hero-foot{
+    margin-top:56px;
+    display:flex;
+    align-items:center;
+    gap:20px;
+    opacity:0;
+    animation: rise 0.8s ease forwards 0.55s;
+  }
+  .btn{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    padding:14px 26px;
+    border:1px solid var(--text);
+    color: var(--text);
+    transition: all 0.25s ease;
+  }
+  .btn:hover{ background: var(--text); color: var(--bg); }
+  .btn.ghost{ border-color: var(--line); color: var(--text-dim); }
+  .btn.ghost:hover{ border-color: var(--accent); color: var(--accent); background:transparent; }
+
+  @keyframes rise{
+    from{ opacity:0; transform:translateY(18px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  /* ---------- section shell ---------- */
+  section{
+    position:relative;
+    z-index:1;
+    padding:120px 0;
+    border-top:1px solid var(--line-soft);
+  }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:24px;
+    margin-bottom:56px;
+    flex-wrap:wrap;
+  }
+  .section-num{
+    font-family:'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size:0.8rem;
+    letter-spacing:0.1em;
+  }
+  .section-head h2{
+    font-size:clamp(2rem, 4vw, 2.8rem);
+  }
+  .section-sub{
+    color: var(--text-dim);
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.78rem;
+    letter-spacing:0.04em;
+    max-width:320px;
+    text-align:right;
+  }
+  @media (max-width:700px){ .section-sub{ text-align:left; } }
+
+  .reveal{
+    opacity:0;
+    transform:translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ---------- about ---------- */
+  .about-grid{
+    display:grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap:64px;
+    align-items:start;
+  }
+  @media (max-width:820px){ .about-grid{ grid-template-columns:1fr; } }
+  .about-grid p{
+    font-size:1.15rem;
+    color:#d6d4cd;
+    font-weight:300;
+  }
+  .about-grid p + p{ margin-top:18px; }
+
+  .stat-card{
+    border:1px solid var(--line);
+    background: var(--surface);
+  }
+  .stat-row{
+    display:flex;
+    justify-content:space-between;
+    padding:16px 20px;
+    border-bottom:1px solid var(--line);
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.82rem;
+  }
+  .stat-row:last-child{ border-bottom:none; }
+  .stat-row .k{ color: var(--text-dim); text-transform:uppercase; letter-spacing:0.04em; }
+  .stat-row .v{ color: var(--text); text-align:right; }
+
+  /* ---------- focus / hobby cards ---------- */
+  .focus-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:1px;
+    background: var(--line);
+    border:1px solid var(--line);
+  }
+  @media (max-width:900px){ .focus-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:520px){ .focus-grid{ grid-template-columns:1fr; } }
+  .focus-card{
+    background: var(--bg);
+    padding:34px 26px;
+    transition: background 0.3s ease;
+  }
+  .focus-card:hover{ background: var(--surface); }
+  .focus-card .fnum{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    color: var(--accent);
+    letter-spacing:0.08em;
+  }
+  .focus-card svg{ width:30px; height:30px; margin:20px 0 18px; stroke: var(--text); }
+  .focus-card h3{
+    font-size:1.05rem;
+    margin-bottom:10px;
+  }
+  .focus-card p{
+    color: var(--text-dim);
+    font-size:0.92rem;
+    font-weight:300;
+  }
+
+  /* ---------- film log ---------- */
+  .log-controls{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    margin-bottom:28px;
+    flex-wrap:wrap;
+  }
+  #filmSearch{
+    background:transparent;
+    border:none;
+    border-bottom:1px solid var(--line);
+    color: var(--text);
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.9rem;
+    padding:10px 2px;
+    width:260px;
+    outline:none;
+    transition:border-color 0.25s;
+  }
+  #filmSearch::placeholder{ color: var(--text-dim); }
+  #filmSearch:focus{ border-color: var(--accent); }
+  .log-count{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.75rem;
+    color: var(--text-dim);
+  }
+  .log-count b{ color: var(--gold); }
+
+  .log-head-row{
+    display:grid;
+    grid-template-columns: 56px 1fr 70px 130px;
+    padding:10px 16px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.68rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color: var(--text-dim);
+    border-bottom:1px solid var(--line);
+  }
+  .log-table{
+    border:1px solid var(--line);
+    background: var(--surface);
+  }
+  .film-row{
+    display:grid;
+    grid-template-columns: 56px 1fr 70px 130px;
+    align-items:center;
+    padding:13px 16px;
+    border-bottom:1px solid var(--line-soft);
+    font-size:0.92rem;
+    transition: background 0.2s ease;
+  }
+  .film-row:last-child{ border-bottom:none; }
+  .film-row:hover{ background: rgba(226,99,44,0.05); }
+  .film-idx{
+    font-family:'JetBrains Mono', monospace;
+    color: var(--text-dim);
+    font-size:0.78rem;
+  }
+  .film-title{ color: var(--text); font-weight:400; }
+  .film-year{
+    font-family:'JetBrains Mono', monospace;
+    color: var(--text-dim);
+    font-size:0.82rem;
+  }
+  .film-rating{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.82rem;
+    color: var(--line);
+    letter-spacing:1px;
+    text-align:right;
+  }
+  .film-rating .on{ color: var(--gold); }
+  @media (max-width:640px){
+    .log-head-row, .film-row{ grid-template-columns: 34px 1fr 52px 90px; }
+    .film-rating{ font-size:0.68rem; }
+  }
+
+  /* ---------- contact ---------- */
+  .contact-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;
+    background: var(--line);
+    border:1px solid var(--line);
+  }
+  @media (max-width:760px){ .contact-grid{ grid-template-columns:1fr; } }
+  .contact-card{
+    background: var(--bg);
+    padding:36px 30px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    transition: background 0.3s ease;
+  }
+  .contact-card:hover{ background: var(--surface); }
+  .contact-card svg{ width:26px; height:26px; stroke: var(--accent); }
+  .contact-card .platform{
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.7rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color: var(--text-dim);
+  }
+  .contact-card .handle{
+    font-family:'Oswald', sans-serif;
+    font-size:1.3rem;
+    font-weight:500;
+    text-transform:none;
+  }
+  .contact-card .go{
+    margin-top:auto;
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.75rem;
+    color: var(--accent);
+  }
+
+  footer{
+    position:relative; z-index:1;
+    padding:40px 0 56px;
+    text-align:center;
+    color: var(--text-dim);
+    font-family:'JetBrains Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.06em;
+    border-top:1px solid var(--line-soft);
+  }
+  footer .accent{ color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="court-lines" aria-hidden="true">
+  <svg viewBox="0 0 1200 1200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="600" cy="230" r="150" fill="none" stroke="#e2632c" stroke-opacity="0.06" stroke-width="1"/>
+    <line x1="0" y1="230" x2="1200" y2="230" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
+    <rect x="450" y="0" width="300" height="230" fill="none" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
+    <circle cx="600" cy="900" r="220" fill="none" stroke="#d4af37" stroke-opacity="0.04" stroke-width="1"/>
+  </svg>
+</div>
+
+<header>
+  <nav>
+    <div class="logo">LA<span>S</span>.</div>
+    <div class="navlinks">
+      <a href="#about">About</a>
+      <a href="#focus">Focus</a>
+      <a href="#log">Film Log</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="hero wrap" id="top">
+    <div class="eyebrow">Portfolio — 2026</div>
+    <h1>LAS<br><em>MIRAN</em></h1>
+    <div class="role-line">
+      <span>Web Developer</span>
+      <span>Musician</span>
+      <span>Basketball Player</span>
+      <span>Film &amp; TV Enthusiast</span>
+    </div>
+    <div class="hero-foot">
+      <a href="#log" class="btn">View Film Log</a>
+      <a href="#contact" class="btn ghost">Get In Touch</a>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <div class="section-num mono">00 / About</div>
+          <h2>The Line-Up</h2>
+        </div>
+        <div class="section-sub">A junior developer who spends the rest of the clock on a court, a fretboard, or a watchlist.</div>
+      </div>
+
+      <div class="about-grid reveal">
+        <div>
+          <p>I'm Las — a computer science student in my junior year, focused on web development. Most of my time on the keyboard goes into building things for the browser, and most of my time away from it goes into basketball, making music, and working through an ever-growing list of movies and shows.</p>
+          <p>I like the overlap between these things more than any one of them on its own: a good build, a good possession, and a good take are all the same kind of problem — reps, timing, and knowing when to pull back.</p>
+        </div>
+        <div class="stat-card">
+          <div class="stat-row"><span class="k">Role</span><span class="v">Web Developer</span></div>
+          <div class="stat-row"><span class="k">Standing</span><span class="v">Junior — CS</span></div>
+          <div class="stat-row"><span class="k">On the court</span><span class="v">Basketball</span></div>
+          <div class="stat-row"><span class="k">Off the court</span><span class="v">Music</span></div>
+          <div class="stat-row"><span class="k">Currently</span><span class="v">Logging films</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="focus">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <div class="section-num mono">01 / Focus</div>
+          <h2>Where the Time Goes</h2>
+        </div>
+        <div class="section-sub">Four things I show up for, in no particular order.</div>
+      </div>
+
+      <div class="focus-grid reveal">
+        <div class="focus-card">
+          <div class="fnum">01</div>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <h3>Music</h3>
+          <p>Writing and playing — the part of the day where nothing has to compile.</p>
+        </div>
+        <div class="focus-card">
+          <div class="fnum">02</div>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13 13 0 0 1 0 18M12 3a13 13 0 0 0 0 18"/></svg>
+          <h3>Basketball</h3>
+          <p>On the court whenever I can be — it's where I think best, oddly enough.</p>
+        </div>
+        <div class="focus-card">
+          <div class="fnum">03</div>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          <h3>Web Development</h3>
+          <p>Junior year, CS major — building toward a career on the front end.</p>
+        </div>
+        <div class="focus-card">
+          <div class="fnum">04</div>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 4v16M17 4v16M2 9h5M2 15h5M17 9h5M17 15h5"/></svg>
+          <h3>Film &amp; TV</h3>
+          <p>A running log of everything I've watched, rated as I go.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="log">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <div class="section-num mono">02 / Film Log</div>
+          <h2>What I've Watched</h2>
+        </div>
+        <div class="section-sub">Every title logged, newest first. Starred entries are the ones that stuck.</div>
+      </div>
+
+      <div class="reveal">
+        <div class="log-controls">
+          <input id="filmSearch" type="text" placeholder="Search the log…" autocomplete="off">
+          <div class="log-count">Showing <b id="shownCount">0</b> / <span id="totalCount">0</span></div>
+        </div>
+
+        <div class="log-table">
+          <div class="log-head-row">
+            <span>No.</span>
+            <span>Title</span>
+            <span>Year</span>
+            <span style="text-align:right;">Rating</span>
+          </div>
+          <div id="filmList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <div class="section-num mono">03 / Contact</div>
+          <h2>Find Me Elsewhere</h2>
+        </div>
+        <div class="section-sub">Music clips, highlights, and whatever else makes the cut.</div>
+      </div>
+
+      <div class="contact-grid reveal">
+        <a class="contact-card" href="https://instagram.com/xzernny" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+          <div class="platform">Instagram</div>
+          <div class="handle">@xzernny</div>
+          <div class="go">Visit profile →</div>
+        </a>
+        <a class="contact-card" href="https://tiktok.com/@xzerny" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+          <div class="platform">TikTok</div>
+          <div class="handle">@xzerny</div>
+          <div class="go">Visit profile →</div>
+        </a>
+        <a class="contact-card" href="https://www.youtube.com/@Lasmiran" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="4"/><polygon points="10,9 16,12 10,15" fill="currentColor" stroke="none"/></svg>
+          <div class="platform">YouTube</div>
+          <div class="handle">@Lasmiran</div>
+          <div class="go">Watch videos →</div>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  LAS<span class="accent">.</span> MIRAN — BUILT FROM SCRATCH, 2026
+</footer>
+
+<script>
+  // ---------- reveal on scroll ----------
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+
+  // ---------- film data ----------
+  // rating: number of full stars (0-5), or null if unrated. .5 = half star.
+  const films = [
+    {t:"Supergirl", y:2026, r:null},
+    {t:"Michael", y:2026, r:5},
+    {t:"Stranger Things 5: The Finale", y:2025, r:null},
+    {t:"Chainsaw Man – The Movie: Reze Arc", y:2025, r:5},
+    {t:"Obsession", y:2025, r:4.5},
+    {t:"Ballerina", y:2025, r:5},
+    {t:"A Complete Unknown", y:2024, r:null},
+    {t:"Gladiator II", y:2024, r:null},
+    {t:"Joker: Folie à Deux", y:2024, r:null},
+    {t:"Deadpool & Wolverine", y:2024, r:null},
+    {t:"Saw X", y:2023, r:5},
+    {t:"Oppenheimer", y:2023, r:null},
+    {t:"The Boogeyman", y:2023, r:null},
+    {t:"Black Adam", y:2022, r:null},
+    {t:"Smile", y:2022, r:null},
+    {t:"Blonde", y:2022, r:null},
+    {t:"The Whale", y:2022, r:null},
+    {t:"Elvis", y:2022, r:null},
+    {t:"Halloween Kills", y:2021, r:null},
+    {t:"Nobody", y:2021, r:null},
+    {t:"Soul", y:2020, r:null},
+    {t:"Rambo: Last Blood", y:2019, r:null},
+    {t:"Joker", y:2019, r:null},
+    {t:"Toy Story 4", y:2019, r:null},
+    {t:"John Wick: Chapter 3 – Parabellum", y:2019, r:5},
+    {t:"Captain Marvel", y:2019, r:null},
+    {t:"Creed II", y:2018, r:null},
+    {t:"Bohemian Rhapsody", y:2018, r:null},
+    {t:"Halloween", y:2018, r:null},
+    {t:"Johnny English Strikes Again", y:2018, r:null},
+    {t:"Blade Runner 2049", y:2017, r:null},
+    {t:"It", y:2017, r:null},
+    {t:"The Boss Baby", y:2017, r:null},
+    {t:"John Wick: Chapter 2", y:2017, r:5},
+    {t:"Get Out", y:2017, r:5},
+    {t:"A Silent Voice: The Movie", y:2016, r:null},
+    {t:"La La Land", y:2016, r:null},
+    {t:"The Revenant", y:2015, r:null},
+    {t:"Creed", y:2015, r:null},
+    {t:"American Sniper", y:2014, r:null},
+    {t:"Interstellar", y:2014, r:null},
+    {t:"Annabelle", y:2014, r:null},
+    {t:"John Wick", y:2014, r:5},
+    {t:"The Equalizer", y:2014, r:null},
+    {t:"Whiplash", y:2014, r:null},
+    {t:"Her", y:2013, r:null},
+    {t:"Prisoners", y:2013, r:null},
+    {t:"Man of Steel", y:2013, r:5},
+    {t:"Skyfall", y:2012, r:5},
+    {t:"The Amazing Spider-Man", y:2012, r:null},
+    {t:"The Hunt", y:2012, r:null},
+    {t:"Johnny English Reborn", y:2011, r:null},
+    {t:"Harry Potter and the Deathly Hallows: Part 2", y:2011, r:null},
+    {t:"Cars 2", y:2011, r:null},
+    {t:"Detachment", y:2011, r:null},
+    {t:"Saw 3D", y:2010, r:null},
+    {t:"Toy Story 3", y:2010, r:null},
+    {t:"The Karate Kid", y:2010, r:null},
+    {t:"Brothers", y:2009, r:5},
+    {t:"This Is It", y:2009, r:5},
+    {t:"Saw VI", y:2009, r:null},
+    {t:"2012", y:2009, r:null},
+    {t:"Harry Potter and the Half-Blood Prince", y:2009, r:null},
+    {t:"Twilight", y:2008, r:null},
+    {t:"Saw V", y:2008, r:5},
+    {t:"The Dark Knight", y:2008, r:null},
+    {t:"Kung Fu Panda", y:2008, r:null},
+    {t:"Taken", y:2008, r:null},
+    {t:"Rambo", y:2008, r:null},
+    {t:"Saw IV", y:2007, r:5},
+    {t:"Harry Potter and the Order of the Phoenix", y:2007, r:null},
+    {t:"Shrek the Third", y:2007, r:null},
+    {t:"Rocky II", y:1979, r:null},
+    {t:"Rocky", y:1976, r:null},
+    {t:"Taxi Driver", y:1976, r:null},
+    {t:"Jaws", y:1975, r:null},
+    {t:"The Godfather Part II", y:1974, r:null},
+    {t:"The Godfather", y:1972, r:null},
+    {t:"The Good, the Bad and the Ugly", y:1966, r:null},
+    {t:"For a Few Dollars More", y:1965, r:null},
+    {t:"A Fistful of Dollars", y:1964, r:null},
+  ];
+
+  function starString(r){
+    if(r === null) return '<span class="film-rating">—</span>';
+    let full = Math.floor(r);
+    let half = r % 1 !== 0;
+    let out = '';
+    for(let i=0;i<5;i++){
+      if(i < full) out += '<span class="on">★</span>';
+      else if(i === full && half) out += '<span class="on">⯨</span>';
+      else out += '<span>★</span>';
+    }
+    return '<span class="film-rating">'+out+'</span>';
+  }
+
+  const listEl = document.getElementById('filmList');
+  const shownEl = document.getElementById('shownCount');
+  const totalEl = document.getElementById('totalCount');
+  totalEl.textContent = films.length;
+
+  function render(filter){
+    const q = (filter||'').trim().toLowerCase();
+    listEl.innerHTML = '';
+    let shown = 0;
+    films.forEach((f, i) => {
+      if(q && !f.t.toLowerCase().includes(q)) return;
+      shown++;
+      const row = document.createElement('div');
+      row.className = 'film-row';
+      row.innerHTML =
+        '<span class="film-idx">'+String(i+1).padStart(2,'0')+'</span>'+
+        '<span class="film-title">'+f.t+'</span>'+
+        '<span class="film-year">'+f.y+'</span>'+
+        starString(f.r);
+      listEl.appendChild(row);
+    });
+    shownEl.textContent = shown;
+  }
+  render('');
+
+  document.getElementById('filmSearch').addEventListener('input', (e) => render(e.target.value));
+</script>
+
+</body>
+</html>
